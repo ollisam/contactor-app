@@ -1,10 +1,37 @@
-import {ActivityIndicator, FlatList, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, SectionList, ScrollView, Text, TouchableOpacity, View, Image} from "react-native";
 import Octicons from '@expo/vector-icons/Octicons';
 import { useRouter } from "expo-router";
 import SearchBar from "@/components/SearchBar";
 import { useEffect } from "react";
 import { useContacts } from "../hooks/useContacts";
 import type { Contact } from "../types/contacts";
+
+function groupContacts(contacts: Contact[]) {
+    // 1. Sort alphabetically
+    const sorted = [...contacts].sort((a, b) =>
+        a.name.localeCompare(b.name)
+    );
+
+    // 2. Group by first letter
+    const groups: Record<string, Contact[]> = {};
+
+    for (const contact of sorted) {
+        const firstLetter = contact.name.charAt(0).toUpperCase();
+
+        if (!groups[firstLetter]) {
+            groups[firstLetter] = [];
+        }
+        groups[firstLetter].push(contact);
+    }
+
+    // 3. Convert to SectionList format
+    return Object.keys(groups)
+        .sort()
+        .map((letter) => ({
+            title: letter,
+            data: groups[letter],
+        }));
+}
 
 export default function Index() {
     const router = useRouter();
@@ -36,10 +63,17 @@ export default function Index() {
     }, [permissionStatus, requestPermission, reloadContacts, contacts.length, isLoading]);
 
     const renderContactItem = ({ item }: { item: Contact }) => {
-        const primaryPhone = item.phoneNumbers[0] ?? "No phone number";
-
         return (
-            <View className="py-3 border-b border-grey-200">
+            <View className="flex-row items-center py-3 px-2">
+                {item.avatar ? (
+                    <Image
+                        source={{ uri: item.avatar }}
+                        className="w-10 h-10 rounded-full mr-3"
+                    />
+                ) : (
+                    <View className="w-10 h-10 rounded-full bg-grey-200 mr-3" />
+                )}
+
                 <Text className="text-base font-semibold font-worksans text-primary">
                     {item.name}
                 </Text>
@@ -49,13 +83,20 @@ export default function Index() {
 
     return (
         <View className="flex-1 bg-background px-6 pt-20">
-            <FlatList
-                data={contacts}
+            <SectionList
+                sections={groupContacts(contacts)}
                 keyExtractor={(item) => item.id}
                 renderItem={renderContactItem}
-                contentContainerStyle={{ paddingBottom: 24 }}
+                renderSectionHeader={({ section }) => (
+                    <View className="bg-background px-2 pt-4 border-b border-grey-200">
+                        <Text className="text-primary font-worksans font-semibold text-xs mb-1">
+                            {section.title}
+                        </Text>
+                        <View className="h-px bg-grey-800 w-full" />
+                    </View>
+                )}
                 ListHeaderComponent={
-                    <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
+                    <ScrollView>
                         <View className="px-1 pb-4 min-h-full">
                             {/* Header row */}
                             <View className="flex-row items-center justify-between mt-16 mb-2.5">
@@ -76,7 +117,7 @@ export default function Index() {
                             </View>
 
                             {/* Search bar */}
-                            <View className="mb-4">
+                            <View>
                                 <SearchBar
                                     onPress={() => router.push("/search")}
                                     placeholder="Search"

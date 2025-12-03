@@ -81,6 +81,7 @@ export function transformOsContactToContact(
         name: fullName,
         phoneNumbers,
         emails,
+        avatar: osContact.image?.uri ?? null,
     };
 }
 
@@ -96,6 +97,7 @@ export async function fetchContactsFromOS(): Promise<AppContact[]> {
                 Contacts.Fields.LastName,
                 Contacts.Fields.PhoneNumbers,
                 Contacts.Fields.Emails,
+                Contacts.Fields.Image,
             ],
             sort: Contacts.SortTypes.FirstName,
         });
