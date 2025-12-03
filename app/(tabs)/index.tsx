@@ -1,5 +1,6 @@
-import {ScrollView, Text, View} from "react-native";
+import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import Octicons from '@expo/vector-icons/Octicons';
+import {router} from "expo-router";
 
 export default function Index() {
     return (
@@ -10,16 +11,26 @@ export default function Index() {
                     <Text className="text-6xl text-primary font-bold font-instrument" style={{ lineHeight: 55}}>
                         Contacts
                     </Text>
-                    <View className="w-8 h-8 rounded-full bg-grey-200 items-center justify-center mb-2">
+                    <TouchableOpacity
+                        className="w-8 h-8 rounded-full bg-grey-200 items-center justify-center mb-2"
+                        onPress={() => {
+                            router.push('./addcontact')
+                        }}
+                    >
                         <Octicons name="plus" size={20} color="white" />
-                    </View>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Search bar */}
-                <View className="w-full h-6 bg-white/5 border border-white/10 rounded-full flex-row items-center px-4">
+                <TouchableOpacity
+                    className="w-full h-6 bg-white/5 border border-white/10 rounded-full flex-row items-center px-4"
+                    onPress={() => {
+                        router.push('./search')
+                    }}
+                >
                     <Octicons name="search" size={15} color="#5D5C5C" className="pr-2.5"/>
                     <Text className="text-sm text-secondary font-worksans justify-center">Search</Text>
-                </View>
+                </TouchableOpacity>
 
             </ScrollView>
         </View>
