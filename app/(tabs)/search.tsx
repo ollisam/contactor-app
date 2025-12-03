@@ -1,6 +1,6 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native'
 import React from "react";
-import Octicons from "@expo/vector-icons/Octicons";
+import SearchBar from "@/components/SearchBar";
 
 const search = () => {
     return (
@@ -14,9 +14,11 @@ const search = () => {
                 </View>
 
                 {/* Search bar */}
-                <View className="w-full h-6 bg-white/5 border border-white/10 rounded-full flex-row items-center px-4">
-                    <Octicons name="search" size={15} color="#5D5C5C" className="pr-2.5"/>
-                    <Text className="text-sm text-secondary font-worksans justify-center">Search</Text>
+                <View className="flex-1">
+                    <SearchBar
+                        onPress={() => {}}
+                        placeholder="Search"
+                    />
                 </View>
 
             </ScrollView>

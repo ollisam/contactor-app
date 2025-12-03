@@ -1,8 +1,11 @@
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import Octicons from '@expo/vector-icons/Octicons';
-import {router} from "expo-router";
+import { useRouter } from "expo-router";
+import SearchBar from "@/components/SearchBar";
 
 export default function Index() {
+    const router = useRouter();
+
     return (
         <View className="flex-1 bg-background px-6 pt-20">
             {/* Header row */}
@@ -22,15 +25,12 @@ export default function Index() {
                 </View>
 
                 {/* Search bar */}
-                <TouchableOpacity
-                    className="w-full h-6 bg-white/5 border border-white/10 rounded-full flex-row items-center px-4"
-                    onPress={() => {
-                        router.push('./search')
-                    }}
-                >
-                    <Octicons name="search" size={15} color="#5D5C5C" className="pr-2.5"/>
-                    <Text className="text-sm text-secondary font-worksans justify-center">Search</Text>
-                </TouchableOpacity>
+                <View className="flex-1">
+                    <SearchBar
+                        onPress={() => router.push('/search')}
+                        placeholder="Search"
+                    />
+                </View>
 
             </ScrollView>
         </View>
