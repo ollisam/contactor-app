@@ -16,7 +16,8 @@ module.exports = {
                 accent: '#7A15FF',
             },
             fontFamily:{
-                instrument: ['InstrumentSerif_400Regular']
+                instrument: ['InstrumentSerif_400Regular'],
+                worksans: ['WorkSans_400Regular'],
             },
         },
     },
