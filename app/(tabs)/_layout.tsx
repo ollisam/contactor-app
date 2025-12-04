@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native'
 import { BlurView } from 'expo-blur';
 import React from "react";
-import {Tabs} from "expo-router";
+import { Tabs } from "expo-router";
 import Octicons from '@expo/vector-icons/Octicons';
 
 const TabIcon = ({focused, icon}: any) => {
@@ -37,7 +37,7 @@ const _layout = () => {
                     position: 'absolute',
                     backgroundColor: 'rgba(255,255,255,0.06)',
                     borderWidth: 1,
-                    borderColor: 'rgba(255,255,255,0.35)',
+                    borderColor: 'rgba(255,255,255,0.07)',
                     elevation: 0,
                     shadowColor: '#000',
                     shadowOpacity: 0.25,

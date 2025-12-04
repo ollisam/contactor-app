@@ -111,37 +111,40 @@ const addContact = () => {
 
                 {/* Name Card */}
                 <View className="bg-grey-200 rounded-3xl p-4 mb-6">
-                    <View className="bg-grey-100 rounded-2xl px-5 py-3 mb-3">
+                    <View className="bg-grey-100 rounded-2xl mb-3">
                         <TextInput
                             placeholder="First name"
                             placeholderTextColor="#ffffff"
-                            className="text-white text-lg font-worksans"
+                            className="text-white text-lg font-worksans h-14 px-5"
+                            style={{ paddingVertical: 0 }}   // this fixes the low text on iOS
                             value={firstName}
                             onChangeText={setFirstName}
                         />
                     </View>
 
-                    <View className="bg-grey-100 rounded-2xl px-5 py-3">
+                    <View className=" bg-grey-100 rounded-2xl">
                         <TextInput
                             placeholder="Last name"
                             placeholderTextColor="#ffffff"
-                            className="text-white text-lg font-worksans"
+                            className="text-white text-lg font-worksans h-14 px-5"
                             value={lastName}
                             onChangeText={setLastName}
+                            textAlignVertical="center"
                         />
                     </View>
                 </View>
 
                 {/* Phone Card */}
                 <View className="bg-grey-200 rounded-3xl p-4">
-                    <View className="bg-grey-100 rounded-2xl px-5 py-3">
+                    <View className="bg-grey-100 rounded-2xl">
                         <TextInput
                             placeholder="Phone number"
                             placeholderTextColor="#ffffff"
                             keyboardType="phone-pad"
-                            className="text-white text-lg font-worksans"
+                            className="text-white text-lg font-worksans h-14 px-5"
                             value={phone}
                             onChangeText={setPhone}
+                            textAlignVertical="center"
                         />
                     </View>
                 </View>
