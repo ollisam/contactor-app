@@ -1,9 +1,11 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View, ScrollView} from 'react-native'
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {router, useFocusEffect, useLocalSearchParams} from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {useContacts} from "@/app/hooks/useContacts";
 import * as Linking from "expo-linking";
+import { useRecents } from "@/app/hooks/useRecents";
+
 
 const contactDetail = () => {
 
@@ -17,6 +19,14 @@ const contactDetail = () => {
         isLoading,
     } = useContacts();
 
+    const { logCall } = useRecents();
+
+    // Ensure contacts are loaded on this screen too
+    useEffect(() => {
+        if (permissionStatus === "granted" && contacts.length === 0) {
+            reloadContacts();
+        }
+    }, [permissionStatus, contacts.length, reloadContacts]);
     useFocusEffect(
         React.useCallback(() => {
             if (permissionStatus === "granted") {
@@ -67,11 +77,22 @@ const contactDetail = () => {
         );
     }
 
-    const handleCall = () => {
-        if (!contact) return;
-        if (!contact.phoneNumbers) return;
+    const handleCall = async () => {
+        if (!contact || !contact.phoneNumbers) return;
 
-        Linking.openURL(`tel:${contact.phoneNumbers}`);
+        const phoneNumber = contact.phoneNumbers;
+
+        try {
+            await Linking.openURL(`tel:${phoneNumber}`);
+        } finally {
+            // Log the call regardless of whether user actually completes it in dialer
+            await logCall({
+                id: contact.id,
+                name: contact.name,
+                phoneNumbers: phoneNumber,
+                timestamp: Date.now(),
+            });
+        }
     };
 
     return (

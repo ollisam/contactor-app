@@ -67,21 +67,14 @@ export function transformOsContactToContact(
         'Unnamed';
 
     const phoneNumbers =
-        osContact.phoneNumbers
-            ?.map((p) => p.number)
-            .filter((number): number is string => typeof number === 'string') ?? [];
-
-    const emails =
-        osContact.emails
-            ?.map((e) => e.email)
-            .filter((email): email is string => typeof email === 'string') ?? [];
+        osContact.phoneNumbers?.find((p) => p?.number)?.number ?? "";
 
     return {
         id: osContact.id,
         name: fullName,
         phoneNumbers,
-        emails,
         avatar: osContact.image?.uri ?? null,
+        isCustom: false
     };
 }
 

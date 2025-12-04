@@ -83,10 +83,10 @@ export function useContacts(): UseContactsResult {
         setIsLoading(true);
 
         try {
-            // 1) OS contacts (what you already had)
+            // OS contacts
             const osContacts = await fetchContactsFromOS();
 
-            // 2) Custom contacts from contacts.json (created in add_contact)
+            // Custom contacts from contacts.json (created in addContact)
             let fileContacts: Contact[] = [];
 
             if (contactsFile.exists) {
@@ -112,7 +112,7 @@ export function useContacts(): UseContactsResult {
                     console.warn('Failed to read contacts.json', e);
                 }
             }
-            // 3) Merge OS + file contacts
+            // Merge OS + file contacts
             setContacts([...osContacts, ...fileContacts]);
 
         } catch (err) {
@@ -121,7 +121,6 @@ export function useContacts(): UseContactsResult {
             setIsLoading(false);
         }
     }, [permissionStatus]);
-
 
     return {
         contacts,
