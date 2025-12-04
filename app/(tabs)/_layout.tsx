@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native'
 import { BlurView } from 'expo-blur';
 import React from "react";
-import {Tabs} from "expo-router";
+import { Tabs } from "expo-router";
 import Octicons from '@expo/vector-icons/Octicons';
 
 const TabIcon = ({focused, icon}: any) => {
