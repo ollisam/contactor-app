@@ -5,6 +5,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {useContacts} from "@/app/hooks/useContacts";
 import * as Linking from "expo-linking";
 import { useRecents } from "@/app/hooks/useRecents";
+import {FontAwesome} from "@expo/vector-icons";
 
 
 const contactDetail = () => {
@@ -100,7 +101,7 @@ const contactDetail = () => {
         <View className="flex-1 bg-background px-6 pt-20">
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* Header row */}
-                <View className="flex-row items-center justify-between mb-6">
+                <View className="flex-row items-center justify-between mb-8">
                     <TouchableOpacity
                         className="w-10 h-10 rounded-full bg-grey-200 items-center justify-center"
                         onPress={() => router.back()}
@@ -114,7 +115,7 @@ const contactDetail = () => {
                             onPress={() =>
                                 router.push({
                                     pathname: "./edit_contact",
-                                    params: { id: String(contact.id) }
+                                    params: { id: String(contact.id) },
                                 })
                             }
                         >
@@ -123,9 +124,9 @@ const contactDetail = () => {
                     )}
                 </View>
 
-                {/* Avatar */}
-                <View className="items-center justify-center mt-4 mb-6">
-                    <View className="w-32 h-32 rounded-full bg-grey-200 overflow-hidden">
+                {/* Avatar + name */}
+                <View className="items-center mb-8">
+                    <View className="w-32 h-32 rounded-full bg-grey-200 overflow-hidden mb-4">
                         {contact.avatar ? (
                             <Image
                                 source={{ uri: contact.avatar }}
@@ -134,21 +135,39 @@ const contactDetail = () => {
                             />
                         ) : null}
                     </View>
+
+                    <Text className="text-white text-3xl font-worksans text-center">
+                        {contact.name}
+                    </Text>
                 </View>
 
-                {/* Name */}
-                <Text className="text-white text-3xl font-worksans text-center mb-4">
-                    {contact.name}
-                </Text>
-                    {contact.phoneNumbers && (
-                        <TouchableOpacity onPress={handleCall}>
-                            <Text className="text-accent text-lg text-center font-worksans">
-                                {contact.phoneNumbers}
-                            </Text>
-                        </TouchableOpacity>
-                    )}
+                {/* Phone section */}
+                {contact.phoneNumbers && (
+                    <View className="mt-2">
+                        {/* Tapable row with number + call icon */}
+                        <TouchableOpacity
+                            onPress={handleCall}
+                            activeOpacity={0.85}
+                            className="flex-row items-center justify-between bg-grey-900 rounded-2xl px-4 py-3"
+                        >
+                            <View className="flex-1 mr-3">
+                                <Text className="text-xs text-secondary font-worksans uppercase tracking-wide mb-1">
+                                    Mobile
+                                </Text>
+                                <Text className="text-lg text-primary font-worksans">
+                                    {contact.phoneNumbers}
+                                </Text>
+                            </View>
 
-                <View style={{ height: 50 }} />
+                            <View className="w-10 h-10 rounded-full bg-grey-100 items-center justify-center">
+                                <FontAwesome name="phone" size={20} color="#7A15FF" />
+                            </View>
+                        </TouchableOpacity>
+
+                    </View>
+                )}
+
+                <View style={{ height: 80 }} />
             </ScrollView>
         </View>
     );

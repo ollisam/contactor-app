@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Image, FlatList, TouchableOpacity} from 'react-native'
+import {StyleSheet, Text, View, Image, FlatList, TouchableOpacity, Alert} from 'react-native'
 import React, {useMemo, useCallback} from "react";
 import SearchBar from "@/components/SearchBar";
 import { useContacts } from "../hooks/useContacts";
@@ -113,7 +113,19 @@ const search = () => {
                     <Text className="text-6xl text-primary font-bold font-instrument" style={{ lineHeight: 55}}>
                         Recents
                     </Text>
-                    <TouchableOpacity className="px-4 py-2 bg-grey-200 rounded-full" onPress={clearAllRecents}>
+                    <TouchableOpacity
+                        className="px-4 py-2 bg-grey-200 rounded-full"
+                        onPress={() => {
+                            Alert.alert(
+                                "Clear Recents",
+                                "Are you sure you want to clear all recent calls?",
+                                [
+                                    { text: "Cancel", style: "cancel" },
+                                    { text: "Clear", style: "destructive", onPress: clearAllRecents },
+                                ]
+                            );
+                        }}
+                    >
                         <Text className="text-white text-base font-worksans">Clear</Text>
                     </TouchableOpacity>
                 </View>
