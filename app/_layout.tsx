@@ -1,13 +1,30 @@
-import { Stack } from "expo-router";
+import {SplashScreen, Stack} from "expo-router";
 import './globals.css';
 import {useFonts, InstrumentSerif_400Regular} from "@expo-google-fonts/instrument-serif";
 import {WorkSans_400Regular} from "@expo-google-fonts/work-sans";
+import {useEffect} from "react";
 
 export default function RootLayout() {
-    const[fontLoaded] = useFonts({
+
+    const [fontsLoaded, fontError] = useFonts({
         InstrumentSerif_400Regular,
         WorkSans_400Regular
-    });
+    })
+
+    useEffect(() => {
+        if (fontError) throw fontError;
+    }, [fontError]);
+
+    useEffect(() => {
+        if (fontsLoaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded]);
+
+    // Block rendering until fonts are ready.
+    if (!fontsLoaded) {
+        return null;
+    }
 
     return (
     <Stack>
