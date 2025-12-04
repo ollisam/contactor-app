@@ -129,14 +129,14 @@ export default function Index() {
                         </View>
 
                         {/* Loading state */}
-                        {isLoading && (
+{/*                        {isLoading && (
                             <View className="flex-row items-center gap-x-2 mb-2">
                                 <ActivityIndicator />
                                 <Text className="text-sm text-grey-300">
                                     Loading contacts...
                                 </Text>
                             </View>
-                        )}
+                        )}*/}
 
                         {/* Error message */}
                         {error && (
