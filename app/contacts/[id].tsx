@@ -90,6 +90,7 @@ const contactDetail = () => {
                 id: contact.id,
                 name: contact.name,
                 phoneNumbers: phoneNumber,
+                avatar: contact.avatar ?? null,
                 timestamp: Date.now(),
             });
         }

@@ -38,7 +38,7 @@ const search = () => {
                         contact?.name ??
                         call.phoneNumbers ??
                         "",
-                    avatar: contact?.avatar ?? null,
+                    avatar: call.avatar ?? contact?.avatar ?? null,
                 };
             }),
         [recentCalls, contacts]

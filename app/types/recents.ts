@@ -3,4 +3,5 @@ export type RecentCall = {
     name: string;
     phoneNumbers: string;
     timestamp: number;
+    avatar?: string | null;
 };
