@@ -3,6 +3,7 @@ import React, {useEffect} from "react";
 import {router, useLocalSearchParams} from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {useContacts} from "@/app/hooks/useContacts";
+import * as Linking from "expo-linking";
 
 const contactDetail = () => {
 
@@ -66,6 +67,13 @@ const contactDetail = () => {
         );
     }
 
+    const handleCall = () => {
+        if (!contact) return;
+        if (!contact.phoneNumbers) return;
+
+        Linking.openURL(`tel:${contact.phoneNumbers}`);
+    };
+
     return (
         <View className="flex-1 bg-background px-6 pt-20">
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -100,12 +108,13 @@ const contactDetail = () => {
                 <Text className="text-white text-3xl font-worksans text-center mb-4">
                     {contact.name}
                 </Text>
-
-                {contact.phoneNumbers && (
-                    <Text className="text-accent text-lg text-center font-worksans">
-                        {contact.phoneNumbers}
-                    </Text>
-                )}
+                    {contact.phoneNumbers && (
+                        <TouchableOpacity onPress={handleCall}>
+                            <Text className="text-accent text-lg text-center font-worksans">
+                                {contact.phoneNumbers}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
 
                 <View style={{ height: 50 }} />
             </ScrollView>
