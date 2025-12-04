@@ -62,20 +62,27 @@ export default function Index() {
 
     const renderContactItem = ({ item }: { item: Contact }) => {
         return (
-            <View className="flex-row items-center py-3 px-2">
-                {item.avatar ? (
-                    <Image
-                        source={{ uri: item.avatar }}
-                        className="w-10 h-10 rounded-full mr-3"
-                    />
-                ) : (
-                    <View className="w-10 h-10 rounded-full bg-grey-200 mr-3" />
-                )}
+            <TouchableOpacity
+                onPress={() => {router.push({
+                        pathname: '../contacts/[id]',
+                        params: {id: item.id}
+                })}}
+            >
+                <View className="flex-row items-center py-3 px-2">
+                    {item.avatar ? (
+                        <Image
+                            source={{ uri: item.avatar }}
+                            className="w-10 h-10 rounded-full mr-3"
+                        />
+                    ) : (
+                        <View className="w-10 h-10 rounded-full bg-grey-200 mr-3" />
+                    )}
 
-                <Text className="text-base font-semibold font-worksans text-primary">
-                    {item.name}
-                </Text>
-            </View>
+                    <Text className="text-base font-semibold font-worksans text-primary">
+                        {item.name}
+                    </Text>
+                </View>
+            </TouchableOpacity>
         );
     };
 
