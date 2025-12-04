@@ -1,4 +1,4 @@
-import {ActivityIndicator, SectionList, ScrollView, Text, TouchableOpacity, View, Image} from "react-native";
+import { SectionList, Text, TouchableOpacity, View, Image} from "react-native";
 import Octicons from '@expo/vector-icons/Octicons';
 import {useFocusEffect, useRouter} from "expo-router";
 import SearchBar from "@/components/SearchBar";
@@ -119,7 +119,7 @@ export default function Index() {
                             <TouchableOpacity
                                 className="w-8 h-8 rounded-full bg-grey-200 items-center justify-center mb-2"
                                 onPress={() => {
-                                    router.push("./addcontact");
+                                    router.push("./add_contact");
                                 }}
                             >
                                 <Octicons name="plus" size={20} color="white" />

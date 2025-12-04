@@ -7,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const contactsFile = new File(Paths.document, "contacts.json");
 
-const addContact = () => {
+const add_contact = () => {
 
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
@@ -39,6 +39,7 @@ const addContact = () => {
 
     const handleSave = () => {
         const newContact = {
+            id: Date.now().toString(),
             firstName,
             lastName,
             phone,
@@ -160,5 +161,5 @@ const addContact = () => {
     );
 };
 
-export default addContact;
+export default add_contact;
 const styles = StyleSheet.create({})

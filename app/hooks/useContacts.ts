@@ -86,7 +86,7 @@ export function useContacts(): UseContactsResult {
             // 1) OS contacts (what you already had)
             const osContacts = await fetchContactsFromOS();
 
-            // 2) Custom contacts from contacts.json (created in addContact)
+            // 2) Custom contacts from contacts.json (created in add_contact)
             let fileContacts: Contact[] = [];
 
             if (contactsFile.exists) {
@@ -121,6 +121,7 @@ export function useContacts(): UseContactsResult {
             setIsLoading(false);
         }
     }, [permissionStatus]);
+
 
     return {
         contacts,

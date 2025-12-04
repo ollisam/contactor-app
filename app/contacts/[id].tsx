@@ -1,6 +1,6 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View, ScrollView} from 'react-native'
-import React, {useEffect} from "react";
-import {router, useLocalSearchParams} from "expo-router";
+import React, {useEffect, useState} from "react";
+import {router, useFocusEffect, useLocalSearchParams} from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {useContacts} from "@/app/hooks/useContacts";
 import * as Linking from "expo-linking";
@@ -8,6 +8,8 @@ import * as Linking from "expo-linking";
 const contactDetail = () => {
 
     const { id } = useLocalSearchParams()
+
+
     const {
         contacts,
         reloadContacts,
@@ -15,14 +17,15 @@ const contactDetail = () => {
         isLoading,
     } = useContacts();
 
-    // Ensure contacts are loaded on this screen too
-    useEffect(() => {
-        if (permissionStatus === "granted" && contacts.length === 0) {
-            reloadContacts();
-        }
-    }, [permissionStatus, contacts.length, reloadContacts]);
+    useFocusEffect(
+        React.useCallback(() => {
+            if (permissionStatus === "granted") {
+                reloadContacts();
+            }
+        }, [permissionStatus])
+    );
 
-    const contact = contacts.find((c) => c.id === id);
+    const contact = contacts.find((c) => String(c.id) === String(id));
 
     if (!id) {
         return (
@@ -84,7 +87,15 @@ const contactDetail = () => {
                     </TouchableOpacity>
 
                     {contact.isCustom && (
-                        <TouchableOpacity className="px-4 py-2 bg-grey-200 rounded-full">
+                        <TouchableOpacity
+                            className="px-4 py-2 bg-grey-200 rounded-full"
+                            onPress={() =>
+                                router.push({
+                                    pathname: "./edit_contact",
+                                    params: { id: String(contact.id) }
+                                })
+                            }
+                        >
                             <Text className="text-white text-base font-worksans">Edit</Text>
                         </TouchableOpacity>
                     )}

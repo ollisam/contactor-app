@@ -1,8 +1,8 @@
-import {SplashScreen, Stack} from "expo-router";
+import {SplashScreen, Stack, Tabs} from "expo-router";
 import './globals.css';
 import {useFonts, InstrumentSerif_400Regular} from "@expo-google-fonts/instrument-serif";
 import {WorkSans_400Regular} from "@expo-google-fonts/work-sans";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 
 export default function RootLayout() {
 
@@ -36,6 +36,12 @@ export default function RootLayout() {
         />
         <Stack.Screen
             name="contacts/[id]"
+            options={{
+                headerShown: false,
+            }}
+        />
+        <Tabs.Screen
+            name="contacts/edit_contact"
             options={{
                 headerShown: false,
             }}

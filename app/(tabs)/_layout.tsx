@@ -79,7 +79,7 @@ const _layout = () => {
                 }}
             />
             <Tabs.Screen
-                name="addcontact"
+                name="add_contact"
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
