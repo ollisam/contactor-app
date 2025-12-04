@@ -5,6 +5,9 @@ import {
     getContactsPermissionStatus,
     requestContactsPermission,
 } from '../services/contactsService';
+import { File, Paths } from "expo-file-system/next";
+
+const contactsFile = new File(Paths.document, "contacts.json");
 
 type UseContactsResult = {
     contacts: Contact[];
@@ -80,8 +83,36 @@ export function useContacts(): UseContactsResult {
         setIsLoading(true);
 
         try {
-            const result = await fetchContactsFromOS();
-            setContacts(result);
+            // 1) OS contacts (what you already had)
+            const osContacts = await fetchContactsFromOS();
+
+            // 2) Custom contacts from contacts.json (created in addContact)
+            let fileContacts: Contact[] = [];
+
+            if (contactsFile.exists) {
+                try {
+                    const raw = contactsFile.text(); // sync read, small file
+                    if (raw) {
+                        const parsed = JSON.parse(await raw) as {
+                            firstName: string;
+                            lastName: string;
+                            phone: string;
+                        }[];
+
+                        fileContacts = parsed.map((c, index): Contact => ({
+                            // 🔁 adjust to your Contact type fields:
+                            id: `custom-${index}`,
+                            name: `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim() || 'Unnamed',
+                            phoneNumbers: c.phone ?? '',
+                        }));
+                    }
+                } catch (e) {
+                    console.warn('Failed to read contacts.json', e);
+                }
+            }
+
+            // 3) Merge OS + file contacts
+            setContacts([...osContacts, ...fileContacts]);
         } catch (err) {
             setError('Failed to load contacts.');
         } finally {

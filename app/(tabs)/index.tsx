@@ -1,8 +1,8 @@
 import {ActivityIndicator, SectionList, ScrollView, Text, TouchableOpacity, View, Image} from "react-native";
 import Octicons from '@expo/vector-icons/Octicons';
-import { useRouter } from "expo-router";
+import {useFocusEffect, useRouter} from "expo-router";
 import SearchBar from "@/components/SearchBar";
-import {useEffect, useMemo} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import { useContacts } from "../hooks/useContacts";
 import type { Contact } from "../types/contacts";
 import { useSearchQuery } from "../hooks/useSearchQuery";
@@ -48,6 +48,14 @@ export default function Index() {
         }
         // If denied/blocked: do nothing here. UI will show a message.
     }, [permissionStatus, requestPermission, reloadContacts, contacts.length, isLoading]);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (permissionStatus === "granted") {
+                reloadContacts();   // always refresh when returning to this screen
+            }
+        }, [permissionStatus, reloadContacts])
+    );
 
     const renderContactItem = ({ item }: { item: Contact }) => {
         return (

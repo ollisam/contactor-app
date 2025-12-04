@@ -1,14 +1,52 @@
 import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
-import React from "react";
+import React, {useState} from "react";
 import Octicons from "@expo/vector-icons/Octicons";
 import {router} from "expo-router";
+import { File, Paths } from "expo-file-system"
+
+const contactsFile = new File(Paths.document, "contacts.json");
 
 const addContact = () => {
+
+    const [firstName, setFirstName] = React.useState("");
+    const [lastName, setLastName] = React.useState("");
+    const [phone, setPhone] = React.useState("");
+
+    const handleSave = () => {
+        const newContact = { firstName, lastName, phone };
+
+        try {
+            // 1. Ensure we have an existing list
+            let contacts: any[] = [];
+
+            if (contactsFile.exists) {
+                // 2. Read file contents synchronously
+                const data = contactsFile.textSync();
+                if (data) {
+                    contacts = JSON.parse(data);
+                }
+            } else {
+                // Create the file if it does not exist
+                contactsFile.create();
+            }
+
+            // 3. Add new contact
+            contacts.push(newContact);
+
+            // 4. Write updated list synchronously
+            contactsFile.write(JSON.stringify(contacts));
+
+            router.back();
+        } catch (err) {
+            console.error("Failed to save contact:", err);
+        }
+    };
+
     return (
         <View className="flex-1 bg-background px-6 pt-20">
             {/* Header row */}
             <ScrollView className="flex-1 px-1" showsVerticalScrollIndicator={false} contentContainerStyle={{minHeight: "100%", paddingBottom: 10}}>
-                <View className="flex-row items-center justify-between mt-16 mb-2.5">
+                <View className="flex-row items-center justify-between mt-5 mb-2.5">
                     <TouchableOpacity
                         className="w-10 h-10 rounded-full bg-grey-200 items-center justify-center mb-2"
                         onPress={() => {
@@ -21,7 +59,7 @@ const addContact = () => {
                     <TouchableOpacity
                         className="w-10 h-10 rounded-full bg-grey-200 items-center justify-center mb-2"
                         onPress={() => {
-                            router.back()
+                            handleSave();
                         }}
                     >
                         <Octicons name="check" size={20} color="white" />
@@ -42,6 +80,8 @@ const addContact = () => {
                             placeholder="First name"
                             placeholderTextColor="#ffffff"
                             className="text-white text-lg font-worksans"
+                            value={firstName}
+                            onChangeText={setFirstName}
                         />
                     </View>
 
@@ -50,6 +90,8 @@ const addContact = () => {
                             placeholder="Last name"
                             placeholderTextColor="#ffffff"
                             className="text-white text-lg font-worksans"
+                            value={lastName}
+                            onChangeText={setLastName}
                         />
                     </View>
                 </View>
@@ -62,6 +104,8 @@ const addContact = () => {
                             placeholderTextColor="#ffffff"
                             keyboardType="phone-pad"
                             className="text-white text-lg font-worksans"
+                            value={phone}
+                            onChangeText={setPhone}
                         />
                     </View>
                 </View>
