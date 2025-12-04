@@ -2,39 +2,16 @@ import {ActivityIndicator, SectionList, ScrollView, Text, TouchableOpacity, View
 import Octicons from '@expo/vector-icons/Octicons';
 import { useRouter } from "expo-router";
 import SearchBar from "@/components/SearchBar";
-import { useEffect } from "react";
+import {useEffect, useMemo} from "react";
 import { useContacts } from "../hooks/useContacts";
 import type { Contact } from "../types/contacts";
-
-function groupContacts(contacts: Contact[]) {
-    // 1. Sort alphabetically
-    const sorted = [...contacts].sort((a, b) =>
-        a.name.localeCompare(b.name)
-    );
-
-    // 2. Group by first letter
-    const groups: Record<string, Contact[]> = {};
-
-    for (const contact of sorted) {
-        const firstLetter = contact.name.charAt(0).toUpperCase();
-
-        if (!groups[firstLetter]) {
-            groups[firstLetter] = [];
-        }
-        groups[firstLetter].push(contact);
-    }
-
-    // 3. Convert to SectionList format
-    return Object.keys(groups)
-        .sort()
-        .map((letter) => ({
-            title: letter,
-            data: groups[letter],
-        }));
-}
+import { useSearchQuery } from "../hooks/useSearchQuery";
+import { contactMatchesQuery } from "../utils/contactSearch";
+import { groupContacts } from "../utils/groupContacts";
 
 export default function Index() {
     const router = useRouter();
+    const { query, setQuery, normalizedQuery } = useSearchQuery();
 
     const {
         contacts,
@@ -44,6 +21,16 @@ export default function Index() {
         requestPermission,
         reloadContacts,
     } = useContacts();
+
+    const filteredContacts = useMemo(
+        () => contacts.filter((c) => contactMatchesQuery(c, normalizedQuery)),
+        [contacts, normalizedQuery]
+    );
+
+    const sections = useMemo(
+        () => groupContacts(filteredContacts),
+        [filteredContacts]
+    );
 
     useEffect(() => {
         // Only run logic when we actually know the status
@@ -81,20 +68,22 @@ export default function Index() {
         );
     };
 
+    const renderSectionHeader = ({ section }: { section: { title: string } }) => (
+        <View className="bg-background px-2 pt-4 border-b border-grey-200">
+            <Text className="text-primary font-worksans font-semibold text-xs mb-1">
+                {section.title}
+            </Text>
+            <View className="h-px bg-grey-800 w-full" />
+        </View>
+    );
+
     return (
         <View className="flex-1 bg-background px-6 pt-20">
             <SectionList
-                sections={groupContacts(contacts)}
+                sections={sections}
                 keyExtractor={(item) => item.id}
                 renderItem={renderContactItem}
-                renderSectionHeader={({ section }) => (
-                    <View className="bg-background px-2 pt-4 border-b border-grey-200">
-                        <Text className="text-primary font-worksans font-semibold text-xs mb-1">
-                            {section.title}
-                        </Text>
-                        <View className="h-px bg-grey-800 w-full" />
-                    </View>
-                )}
+                renderSectionHeader={renderSectionHeader}
                 ListHeaderComponent={
                     <ScrollView>
                         <View className="px-1 pb-4 min-h-full">
@@ -119,7 +108,8 @@ export default function Index() {
                             {/* Search bar */}
                             <View>
                                 <SearchBar
-                                    onPress={() => router.push("/search")}
+                                    value={query}
+                                    onChangeText={setQuery}
                                     placeholder="Search"
                                 />
                             </View>
