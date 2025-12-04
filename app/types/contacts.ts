@@ -3,6 +3,7 @@ export type Contact = {
     name: string;
     phoneNumbers: string;
     avatar?: string | null;
+    isCustom: boolean;
 };
 
 export type ContactsPermissionStatus =

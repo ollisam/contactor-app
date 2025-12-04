@@ -104,16 +104,17 @@ export function useContacts(): UseContactsResult {
                             id: `custom-${index}`,
                             name: `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim() || 'Unnamed',
                             phoneNumbers: c.phone ?? '',
-                            avatar: c.avatar ?? ''
+                            avatar: c.avatar ?? '',
+                            isCustom: true,
                         }));
                     }
                 } catch (e) {
                     console.warn('Failed to read contacts.json', e);
                 }
             }
-
             // 3) Merge OS + file contacts
             setContacts([...osContacts, ...fileContacts]);
+
         } catch (err) {
             setError('Failed to load contacts.');
         } finally {

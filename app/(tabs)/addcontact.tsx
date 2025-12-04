@@ -38,7 +38,13 @@ const addContact = () => {
     };
 
     const handleSave = () => {
-        const newContact = { firstName, lastName, phone, avatar };
+        const newContact = {
+            firstName,
+            lastName,
+            phone,
+            avatar,
+            isCustom: true,
+        };
 
         try {
             // 1. Ensure we have an existing list

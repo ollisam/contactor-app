@@ -53,9 +53,6 @@ const contactDetail = () => {
                         <MaterialIcons name="arrow-back-ios-new" size={20} color="white" />
                     </TouchableOpacity>
 
-                    <View className="px-4 py-2 rounded-full opacity-0">
-                        <Text className="text-white text-base font-worksans">Edit</Text>
-                    </View>
                 </View>
                 <View className="flex-1 items-center justify-center">
                     <Text className="text-primary font-worksans text-lg">
@@ -78,9 +75,11 @@ const contactDetail = () => {
                         <MaterialIcons name="arrow-back-ios-new" size={20} color="white" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity className="px-4 py-2 bg-grey-200 rounded-full">
-                        <Text className="text-white text-base font-worksans">Edit</Text>
-                    </TouchableOpacity>
+                    {contact.isCustom && (
+                        <TouchableOpacity className="px-4 py-2 bg-grey-200 rounded-full">
+                            <Text className="text-white text-base font-worksans">Edit</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 {/* Avatar */}
