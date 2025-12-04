@@ -97,12 +97,14 @@ export function useContacts(): UseContactsResult {
                             firstName: string;
                             lastName: string;
                             phone: string;
+                            avatar: string;
                         }[];
 
                         fileContacts = parsed.map((c, index): Contact => ({
                             id: `custom-${index}`,
                             name: `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim() || 'Unnamed',
                             phoneNumbers: c.phone ?? '',
+                            avatar: c.avatar ?? ''
                         }));
                     }
                 } catch (e) {

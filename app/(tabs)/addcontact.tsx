@@ -1,8 +1,9 @@
-import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image} from 'react-native'
 import React, {useState} from "react";
 import Octicons from "@expo/vector-icons/Octicons";
 import {router} from "expo-router";
 import { File, Paths } from "expo-file-system"
+import * as ImagePicker from 'expo-image-picker';
 
 const contactsFile = new File(Paths.document, "contacts.json");
 
@@ -11,9 +12,33 @@ const addContact = () => {
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
     const [phone, setPhone] = React.useState("");
+    const [avatar, setAvatar] = React.useState("");
+
+    const handlePickImage = async () => {
+        try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                console.warn('Permission to access media library was denied');
+                return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.8,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                setAvatar(result.assets[0].uri);
+            }
+        } catch (error) {
+            console.error('Error picking image:', error);
+        }
+    };
 
     const handleSave = () => {
-        const newContact = { firstName, lastName, phone };
+        const newContact = { firstName, lastName, phone, avatar };
 
         try {
             // 1. Ensure we have an existing list
@@ -66,10 +91,21 @@ const addContact = () => {
                     </TouchableOpacity>
                 </View>
                 <View className="flex-row items-center justify-center mt-7 mb-2">
-                    <View className="w-32 h-32 rounded-full bg-grey-200 items-center justify-center mb-2"></View>
+                    <View className="w-32 h-32 rounded-full bg-grey-200 items-center justify-center mb-2 overflow-hidden">
+                        {avatar ? (
+                            <Image
+                                source={{ uri: avatar }}
+                                style={{ width: '100%', height: '100%' }}
+                                resizeMode="cover"
+                            />
+                        ) : null}
+                    </View>
                 </View>
                 {/* Add Photo Button */}
-                <TouchableOpacity className="self-center bg-grey-100 px-10 py-3 rounded-full mb-8">
+                <TouchableOpacity
+                    className="self-center bg-grey-100 px-10 py-3 rounded-full mb-8"
+                    onPress={handlePickImage}
+                >
                     <Text className="text-white text-lg font-worksans">Add Photo</Text>
                 </TouchableOpacity>
 
