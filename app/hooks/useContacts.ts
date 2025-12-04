@@ -100,7 +100,6 @@ export function useContacts(): UseContactsResult {
                         }[];
 
                         fileContacts = parsed.map((c, index): Contact => ({
-                            // 🔁 adjust to your Contact type fields:
                             id: `custom-${index}`,
                             name: `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim() || 'Unnamed',
                             phoneNumbers: c.phone ?? '',
