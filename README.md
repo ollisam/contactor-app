@@ -26,6 +26,67 @@ In the output, you'll find options to open the app in a
 
 Keep in mind, as stated earlier, this app was only tested for and developed on iOS so it is recommended to select the **iOS simulator** in this case.
 
-### Requirements
+---
 
-### Extra
+## Completed Requirements
+
+### **Contacts Screen**
+- View all saved contacts (OS contacts + custom contacts)
+- Contacts are displayed **alphabetically (A–Z)**
+- Shows only **name** and **thumbnail photo**
+- Search bar allows searching by name
+- Search is **case-insensitive** and matches **any substring**
+- Contact list dynamically updates based on search input
+- Create a new contact directly from the Contacts screen
+
+### **Create New Contact**
+- Full form for adding a new contact:
+  - First name  
+  - Last name  
+  - Phone number  
+  - Photo (camera or image picker)
+- Contacts are stored using Expo FileSystem:
+  - File format: **`<name>-<uuid>.json`**
+  - Each file contains: `name`, `phoneNumber`, `photo`
+- Contacts persist between app sessions
+
+
+---
+
+## **Contact Detail Screen**
+- View detailed information for a selected contact:
+  - Name  
+  - Photo  
+  - Phone Number  
+- Edit existing contact:
+  - All properties are fully editable
+  - After editing, the old file is deleted
+  - A **new file** is created with updated information in the required format
+
+---
+
+## Extra Features
+
+### **OS Contacts Integration**
+- Import contacts from the device using Expo Contacts
+- Includes fetching avatar, name, and phone numbers
+
+### **Call Functionality**
+- Make a phone call directly from inside the app
+- Works for both OS contacts and custom contacts
+
+### **Add image with photo import**
+- Add a avatar/profile picutre to a created contact
+
+### **Recents Screen**
+- Automatically logs all calls to a persistent recents list
+- Recents display:
+  - Name  
+  - Photo  
+  - Time of call  
+  - Quick-call icon
+- Recents persist between sessions
+- Supports search (same behavior as the Contacts screen)
+- “Clear All Recents” with confirmation popup
+
+---
