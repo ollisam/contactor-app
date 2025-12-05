@@ -71,8 +71,9 @@ export function transformOsContactToContact(
 
     return {
         id: osContact.id,
+        uuid: osContact.id,
         name: fullName,
-        phoneNumbers,
+        phoneNumbers: phoneNumbers,
         avatar: osContact.image?.uri ?? null,
         isCustom: false
     };

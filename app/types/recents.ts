@@ -1,7 +1,4 @@
 export type RecentCall = {
-    id: string;
-    name: string;
-    phoneNumbers: string;
+    uuid: string,
     timestamp: number;
-    avatar?: string | null;
 };

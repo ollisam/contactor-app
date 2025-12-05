@@ -1,7 +1,7 @@
 import {ScrollView, Text, TextInput, TouchableOpacity, View, Image} from 'react-native'
-import React from "react";
+import React, {useCallback} from "react";
 import Octicons from "@expo/vector-icons/Octicons";
-import {router} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import { File, Paths } from "expo-file-system"
 import * as ImagePicker from 'expo-image-picker';
 import * as Crypto from "expo-crypto";
@@ -12,6 +12,17 @@ const add_contact = () => {
     const [lastName, setLastName] = React.useState("");
     const [phone, setPhone] = React.useState("");
     const [avatar, setAvatar] = React.useState("");
+
+    useFocusEffect(
+        useCallback(() => {
+            // Screen just became active → ensure fields are cleared
+            setFirstName("");
+            setLastName("");
+            setPhone("");
+            setAvatar("");
+            return;
+        }, [])
+    );
 
     const handlePickImage = async () => {
         try {
@@ -116,7 +127,7 @@ const add_contact = () => {
                             placeholder="First name"
                             placeholderTextColor="#ffffff"
                             className="text-white text-lg font-worksans h-14 px-5"
-                            style={{ paddingVertical: 0 }}   // this fixes the low text on iOS
+                            style={{ paddingVertical: 0 }}
                             value={firstName}
                             onChangeText={setFirstName}
                         />

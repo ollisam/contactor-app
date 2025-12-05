@@ -5,7 +5,6 @@ import { useContacts } from "@/app/hooks/useContacts";
 import Octicons from "@expo/vector-icons/Octicons";
 import { File, Paths } from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import * as Crypto from "expo-crypto";
 
 const EditContact = () => {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -55,14 +54,17 @@ const EditContact = () => {
 
         // Extract the existing filename and UUID from contact.id
         const currentFileName = String(contact.id);
-        const uuid = Crypto.randomUUID();
+        const withoutExt = currentFileName.replace(/\.json$/i, "");
+        const lastDashIndex = withoutExt.lastIndexOf("-");
+        const existingUuid =
+            lastDashIndex !== -1 ? withoutExt.slice(lastDashIndex + 1) : withoutExt;
 
-        // Build a new safe name based on the updated full name
+        // Build new safe name based on edited name
         const safeName = fullName
             .replace(/[^a-z0-9\- ]/gi, "")
             .replace(/\s+/g, "-");
 
-        const newFileName = `${safeName}-${uuid}.json`;
+        const newFileName = `${safeName}-${existingUuid}.json`;
 
         // Delete the old file
         try {
@@ -72,9 +74,8 @@ const EditContact = () => {
             console.warn("Failed to delete old contact file", e);
         }
 
-        // Write the new file with updated content
+        // Write the new file
         const file = new File(Paths.document, newFileName);
-
         const content = {
             name: fullName,
             phoneNumber: phone,

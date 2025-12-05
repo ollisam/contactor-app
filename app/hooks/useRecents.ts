@@ -19,26 +19,28 @@ export function useRecents(): UseRecentsResult {
     const reloadRecents = useCallback(async () => {
         setError(null);
         setIsLoading(true);
-
         try {
-            const calls = await getRecentCalls();
-            setRecentCalls(calls);
+            const loaded = await getRecentCalls();
+            setRecentCalls(loaded);
         } catch (e) {
-            setError("Failed to load recent calls.");
+            setError('Failed to load recent calls.');
         } finally {
             setIsLoading(false);
         }
     }, []);
 
-    const logCall = useCallback(async (call: RecentCall) => {
-        try {
-            await appendRecentCall(call);
-            // Update local state so UI updates immediately
-            setRecentCalls((prev) => [call, ...prev].slice(0, 100));
-        } catch (e) {
-            console.warn("Failed to append recent call", e);
-        }
-    }, []);
+    const logCall = useCallback(
+        async (call: RecentCall) => {
+            try {
+                await appendRecentCall(call);
+                // optionally keep state in sync:
+                setRecentCalls((prev) => [...prev, call]);
+            } catch (e) {
+                console.warn('Failed to log call', e);
+            }
+        },
+        []
+    );
 
     const clearAllRecents = useCallback(async () => {
         try {

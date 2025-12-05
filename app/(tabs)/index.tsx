@@ -66,9 +66,7 @@ export default function Index() {
                 onPress={() => {router.push({
                         pathname: '../contacts/[id]',
                         params: {id: item.id}
-                })
-                    console.log(item.id)
-                }}
+                })}}
             >
                 <View className="flex-row items-center py-3 px-2">
                     {item.avatar ? (

@@ -94,7 +94,6 @@ export function useContacts(): UseContactsResult {
 
                 for (const entry of entries) {
                     // We only care about JSON files that follow the <name>-<uuid>.json pattern.
-                    // This excludes other JSON files like recentCalls.json.
                     if (!entry.name.endsWith('.json')) continue;
                     if (!entry.name.includes('-')) continue;
 
@@ -114,8 +113,16 @@ export function useContacts(): UseContactsResult {
                                 ? (parsed.name as string)
                                 : 'Unnamed';
 
+                        const withoutExt = entry.name.replace(/\.json$/i, '');
+                        const lastDashIndex = withoutExt.lastIndexOf('-');
+                        const uuid =
+                            lastDashIndex !== -1
+                                ? withoutExt.slice(lastDashIndex + 1)
+                                : withoutExt;
+
                         fileContacts.push({
-                            id: entry.name, // use file name as stable, unique id for custom contacts
+                            id: entry.name,
+                            uuid,
                             name,
                             phoneNumbers: parsed.phoneNumber ?? '',
                             avatar: parsed.photo ?? null,

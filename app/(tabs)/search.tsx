@@ -3,61 +3,64 @@ import React, {useMemo, useCallback} from "react";
 import SearchBar from "@/components/SearchBar";
 import { useContacts } from "../hooks/useContacts";
 import { useRecents } from "../hooks/useRecents";
-import type { RecentCall } from "../types/recents";
 import {useSearchQuery} from "@/app/hooks/useSearchQuery";
 import * as Linking from "expo-linking";
 import {FontAwesome} from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import {useFocusEffect} from "expo-router";
 
-type RecentRow = RecentCall & {
+type RecentRow = {
+    uuid: string;
+    timestamp: number;
     contactName: string;
+    phoneNumber: string;
     avatar: string | null;
 };
 
 const search = () => {
-    const { contacts } = useContacts();
-    const { recentCalls, reloadRecents, clearAllRecents } = useRecents();
+    const { contacts, reloadContacts } = useContacts();
+    const { recentCalls, clearAllRecents, reloadRecents } = useRecents();
     const { query, setQuery, normalizedQuery } = useSearchQuery();
 
     useFocusEffect(
         useCallback(() => {
-            reloadRecents();
-        }, [reloadRecents])
+            void reloadContacts();
+            void reloadRecents();
+
+            return;
+        }, [reloadContacts, reloadRecents])
     );
 
     const rows: RecentRow[] = useMemo(
         () =>
             recentCalls.map((call) => {
-                const contact = contacts.find((c) => c.id === call.id);
+                const contact = contacts.find((c) => c.uuid === call.uuid);
+
+                const name = contact?.name ?? "Unknown";
+                const phoneNumber = contact?.phoneNumbers ?? "";
+                const avatar = contact?.avatar ?? null;
 
                 return {
-                    ...call,
-                    // Always fall back to something string-y
-                    contactName:
-                        call.name ??
-                        contact?.name ??
-                        call.phoneNumbers ??
-                        "",
-                    avatar: call.avatar ?? contact?.avatar ?? null,
+                    uuid: call.uuid,
+                    timestamp: call.timestamp,
+                    contactName: name,
+                    phoneNumber,
+                    avatar,
                 };
             }),
         [recentCalls, contacts]
     );
 
-    const filteredRows: RecentRow[] = useMemo(
-        () => {
-            if (!normalizedQuery) return rows;
+    const filteredRows = useMemo(() => {
+        if (!normalizedQuery) return rows;
 
-            return rows.filter((row) => {
-                const q = normalizedQuery.toLowerCase();
-                const name = (row.contactName ?? "").toLowerCase();
-                const phone = (row.phoneNumbers ?? "").toLowerCase();
+        const q = normalizedQuery.toLowerCase();
 
-                return name.includes(q) || phone.includes(q);
-            });
-        },
-        [rows, normalizedQuery]
-    );
+        return rows.filter((row) => {
+            const name = (row.contactName ?? "").toLowerCase();
+            const phone = (row.phoneNumber ?? "").toLowerCase();
+            return name.includes(q) || phone.includes(q);
+        });
+    }, [rows, normalizedQuery]);
 
     const renderItem = ({ item }: { item: RecentRow }) => {
         const time = new Date(item.timestamp).toLocaleTimeString([], {
@@ -66,8 +69,8 @@ const search = () => {
         });
 
         const handleCallPress = () => {
-            if (item.phoneNumbers) {
-                Linking.openURL(`tel:${item.phoneNumbers}`);
+            if (item.phoneNumber) {
+                Linking.openURL(`tel:${item.phoneNumber}`);
             }
         };
 
@@ -141,7 +144,7 @@ const search = () => {
 
                 <FlatList
                     data={filteredRows}
-                    keyExtractor={(item, index) => `${item.id}-${item.timestamp}-${index}`}
+                    keyExtractor={(item, index) => `${item.uuid}-${item.timestamp}-${index}`}
                     renderItem={renderItem}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 32 }}

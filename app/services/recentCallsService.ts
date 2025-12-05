@@ -16,7 +16,6 @@ async function readRecentCallsFile(): Promise<RecentCall[]> {
 
         const parsed = JSON.parse(text) as RecentCall[];
         if (!Array.isArray(parsed)) return [];
-
         return parsed;
     } catch (e) {
         console.warn("Failed to read recentCalls.json", e);

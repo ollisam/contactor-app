@@ -88,10 +88,7 @@ const contactDetail = () => {
         } finally {
             // Log the call regardless of whether user actually completes it in dialer
             await logCall({
-                id: contact.id,
-                name: contact.name,
-                phoneNumbers: phoneNumber,
-                avatar: contact.avatar ?? null,
+                uuid: contact.uuid,
                 timestamp: Date.now(),
             });
         }
