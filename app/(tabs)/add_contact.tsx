@@ -1,11 +1,10 @@
-import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image} from 'react-native'
-import React, {useState} from "react";
+import {ScrollView, Text, TextInput, TouchableOpacity, View, Image} from 'react-native'
+import React from "react";
 import Octicons from "@expo/vector-icons/Octicons";
 import {router} from "expo-router";
 import { File, Paths } from "expo-file-system"
 import * as ImagePicker from 'expo-image-picker';
-
-const contactsFile = new File(Paths.document, "contacts.json");
+import * as Crypto from "expo-crypto";
 
 const add_contact = () => {
 
@@ -38,35 +37,29 @@ const add_contact = () => {
     };
 
     const handleSave = () => {
-        const newContact = {
-            id: Date.now().toString(),
-            firstName,
-            lastName,
-            phone,
-            avatar,
-            isCustom: true,
-        };
-
         try {
-            // 1. Ensure we have an existing list
-            let contacts: any[] = [];
+            // 1. Build full name
+            const name = `${firstName} ${lastName}`.trim() || "Unnamed";
 
-            if (contactsFile.exists) {
-                // 2. Read file contents synchronously
-                const data = contactsFile.textSync();
-                if (data) {
-                    contacts = JSON.parse(data);
-                }
-            } else {
-                // Create the file if it does not exist
-                contactsFile.create();
-            }
+            // 2. Generate UUID
+            const uuid = Crypto.randomUUID();
 
-            // 3. Add new contact
-            contacts.push(newContact);
+            // 3. Build safe filename <name>-<uuid>.json
+            const safeName = name
+                .replace(/[^a-z0-9\- ]/gi, "")
+                .replace(/\s+/g, "-");
+            const fileName = `${safeName}-${uuid}.json`;
 
-            // 4. Write updated list synchronously
-            contactsFile.write(JSON.stringify(contacts));
+            // 4. Prepare payload in rubric format
+            const payload = {
+                name,
+                phoneNumber: phone,
+                photo: avatar || null,
+            };
+
+            // 5. Write a single JSON object to its own file
+            const file = new File(Paths.document, fileName);
+            file.write(JSON.stringify(payload));
 
             router.back();
         } catch (err) {
@@ -162,4 +155,3 @@ const add_contact = () => {
 };
 
 export default add_contact;
-const styles = StyleSheet.create({})

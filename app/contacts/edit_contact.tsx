@@ -5,8 +5,7 @@ import { useContacts } from "@/app/hooks/useContacts";
 import Octicons from "@expo/vector-icons/Octicons";
 import { File, Paths } from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-
-const contactsFile = new File(Paths.document, "contacts.json");
+import * as Crypto from "expo-crypto";
 
 const EditContact = () => {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -50,52 +49,41 @@ const EditContact = () => {
     }
 
     const handleSave = () => {
-        if (!contact) return;
+        if (!contact || !contact.isCustom) return;
 
-        // Only support editing custom contacts stored in contacts.json
-        if (!contact.isCustom) {
-            console.warn("Editing OS contacts is not implemented.");
-            return;
-        }
+        const fullName = `${firstName} ${lastName}`.trim() || "Unnamed";
 
-        // custom-[index]
-        const indexStr = String(contact.id).replace("custom-", "");
-        const idx = Number(indexStr);
-        if (Number.isNaN(idx)) {
-            console.warn("Invalid custom contact id:", contact.id);
-            return;
-        }
+        // Extract the existing filename and UUID from contact.id
+        const currentFileName = String(contact.id);
+        const uuid = Crypto.randomUUID();
 
+        // Build a new safe name based on the updated full name
+        const safeName = fullName
+            .replace(/[^a-z0-9\- ]/gi, "")
+            .replace(/\s+/g, "-");
+
+        const newFileName = `${safeName}-${uuid}.json`;
+
+        // Delete the old file
         try {
-            let stored: any[] = [];
-
-            if (contactsFile.exists) {
-                const raw = contactsFile.textSync();
-                if (raw) {
-                    stored = JSON.parse(raw);
-                }
-            }
-
-            // Build updated file entry
-            const updated = {
-                ...(stored[idx] ?? {}),
-                firstName,
-                lastName,
-                phone,
-                avatar,
-                isCustom: true,
-            };
-
-            // Replace the entry at that index
-            stored[idx] = updated;
-
-            // Write back to disk
-            contactsFile.write(JSON.stringify(stored));
-
-            router.back() // go back to previous screen
+            const oldFile = new File(Paths.document, currentFileName);
+            oldFile.delete();
         } catch (e) {
-            console.error("Failed to update contact:", e);
+            console.warn("Failed to delete old contact file", e);
         }
+
+        // Write the new file with updated content
+        const file = new File(Paths.document, newFileName);
+
+        const content = {
+            name: fullName,
+            phoneNumber: phone,
+            photo: avatar,
+        };
+
+        file.write(JSON.stringify(content));
+
+        router.push('/');
     };
 
     const handlePickImage = async () => {
@@ -114,14 +102,13 @@ const EditContact = () => {
             });
 
             if (!result.canceled && result.assets && result.assets.length > 0) {
-                setAvatar(result.assets[0].uri);   // 👈 this updates state used by handleSave
+                setAvatar(result.assets[0].uri);
             }
         } catch (error) {
             console.error("Error picking image:", error);
         }
     };
 
-    // UI
     return (
         <View className="flex-1 bg-background px-6 pt-20">
             <ScrollView>

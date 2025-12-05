@@ -66,7 +66,9 @@ export default function Index() {
                 onPress={() => {router.push({
                         pathname: '../contacts/[id]',
                         params: {id: item.id}
-                })}}
+                })
+                    console.log(item.id)
+                }}
             >
                 <View className="flex-row items-center py-3 px-2">
                     {item.avatar ? (
@@ -134,16 +136,6 @@ export default function Index() {
                                 placeholder="Search"
                             />
                         </View>
-
-                        {/* Loading state */}
-{/*                        {isLoading && (
-                            <View className="flex-row items-center gap-x-2 mb-2">
-                                <ActivityIndicator />
-                                <Text className="text-sm text-grey-300">
-                                    Loading contacts...
-                                </Text>
-                            </View>
-                        )}*/}
 
                         {/* Error message */}
                         {error && (

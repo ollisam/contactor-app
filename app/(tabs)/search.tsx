@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Image, FlatList, TouchableOpacity, Alert} from 'react-native'
+import {Text, View, Image, FlatList, TouchableOpacity, Alert} from 'react-native'
 import React, {useMemo, useCallback} from "react";
 import SearchBar from "@/components/SearchBar";
 import { useContacts } from "../hooks/useContacts";
@@ -151,4 +151,3 @@ const search = () => {
 };
 
 export default search;
-const styles = StyleSheet.create({})

@@ -5,9 +5,7 @@ import {
     getContactsPermissionStatus,
     requestContactsPermission,
 } from '../services/contactsService';
-import { File, Paths } from "expo-file-system/next";
-
-const contactsFile = new File(Paths.document, "contacts.json");
+import { File, Paths, Directory } from "expo-file-system/next";
 
 type UseContactsResult = {
     contacts: Contact[];
@@ -85,33 +83,52 @@ export function useContacts(): UseContactsResult {
         try {
             // OS contacts
             const osContacts = await fetchContactsFromOS();
-
-            // Custom contacts from contacts.json (created in addContact)
+            // Custom contacts from per-contact JSON files:
+            // Each file is saved as <name-of-contact>-<uuid>.json
+            // with content: { name, phoneNumber, photo }
             let fileContacts: Contact[] = [];
 
-            if (contactsFile.exists) {
-                try {
-                    const raw = contactsFile.text(); // sync read, small file
-                    if (raw) {
-                        const parsed = JSON.parse(await raw) as {
-                            firstName: string;
-                            lastName: string;
-                            phone: string;
-                            avatar: string;
-                        }[];
+            try {
+                const docsDir = new Directory(Paths.document);
+                const entries = await docsDir.list();
 
-                        fileContacts = parsed.map((c, index): Contact => ({
-                            id: `custom-${index}`,
-                            name: `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim() || 'Unnamed',
-                            phoneNumbers: c.phone ?? '',
-                            avatar: c.avatar ?? '',
+                for (const entry of entries) {
+                    // We only care about JSON files that follow the <name>-<uuid>.json pattern.
+                    // This excludes other JSON files like recentCalls.json.
+                    if (!entry.name.endsWith('.json')) continue;
+                    if (!entry.name.includes('-')) continue;
+
+                    const file = new File(Paths.document, entry.name);
+                    const raw = file.text();
+                    if (!raw) continue;
+
+                    try {
+                        const parsed = JSON.parse(await raw) as {
+                            name?: string;
+                            phoneNumber?: string;
+                            photo?: string | null;
+                        };
+
+                        const name =
+                            (parsed.name ?? '').trim() !== ''
+                                ? (parsed.name as string)
+                                : 'Unnamed';
+
+                        fileContacts.push({
+                            id: entry.name, // use file name as stable, unique id for custom contacts
+                            name,
+                            phoneNumbers: parsed.phoneNumber ?? '',
+                            avatar: parsed.photo ?? null,
                             isCustom: true,
-                        }));
+                        });
+                    } catch (e) {
+                        console.warn('Failed to parse contact file', entry.name, e);
                     }
-                } catch (e) {
-                    console.warn('Failed to read contacts.json', e);
                 }
+            } catch (e) {
+                console.warn('Failed to read custom contacts from file system', e);
             }
+
             // Merge OS + file contacts
             setContacts([...osContacts, ...fileContacts]);
 

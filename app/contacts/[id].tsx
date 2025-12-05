@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View, ScrollView} from 'react-native'
+import {Image, Text, TouchableOpacity, View, ScrollView} from 'react-native'
 import React, {useEffect} from "react";
 import {router, useFocusEffect, useLocalSearchParams} from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -174,4 +174,3 @@ const contactDetail = () => {
 }
 
 export default contactDetail;
-const styles = StyleSheet.create({})

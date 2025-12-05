@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import { BlurView } from 'expo-blur';
 import React from "react";
 import { Tabs } from "expo-router";
@@ -95,4 +95,3 @@ const _layout = () => {
 };
 
 export default _layout;
-const styles = StyleSheet.create({})
